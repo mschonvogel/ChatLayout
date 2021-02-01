@@ -270,8 +270,8 @@ class StateControllerProcessUpdatesTests: XCTestCase {
         XCTAssertEqual(layout.controller.itemIdentifier(for: ItemPath(item: 1, section: 1), kind: .cell, at: .beforeUpdate), layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 1), kind: .cell, at: .afterUpdate))
         XCTAssertEqual(layout.controller.itemIdentifier(for: ItemPath(item: 2, section: 1), kind: .cell, at: .beforeUpdate), layout.controller.itemIdentifier(for: ItemPath(item: 2, section: 1), kind: .cell, at: .afterUpdate))
         XCTAssertEqual(layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 2), kind: .cell, at: .beforeUpdate), layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 0), kind: .cell, at: .afterUpdate))
-        XCTAssertEqual(layout.controller.itemPath(by: layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 2), kind: .cell, at: .beforeUpdate)!, at: .afterUpdate), ItemPath(item: 0, section: 0))
-        XCTAssertEqual(layout.controller.itemPath(by: layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 0), kind: .cell, at: .beforeUpdate)!, at: .afterUpdate), ItemPath(item: 0, section: 2))
+        XCTAssertEqual(layout.controller.itemPath(by: layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 2), kind: .cell, at: .beforeUpdate)!, kind: .cell, at: .afterUpdate), ItemPath(item: 0, section: 0))
+        XCTAssertEqual(layout.controller.itemPath(by: layout.controller.itemIdentifier(for: ItemPath(item: 0, section: 0), kind: .cell, at: .beforeUpdate)!, kind: .cell, at: .afterUpdate), ItemPath(item: 0, section: 2))
         layout.controller.commitUpdates()
     }
 
