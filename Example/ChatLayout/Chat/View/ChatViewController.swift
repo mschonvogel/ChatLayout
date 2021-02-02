@@ -13,8 +13,13 @@ import Foundation
 import FPSCounter
 import InputBarAccessoryView
 import UIKit
+import RxSwift
+import RxCocoa
+import RxViewController
 
 final class ChatViewController: UIViewController {
+    let disposeBag = DisposeBag()
+    let viewModel = ChatViewModel()
 
     private enum ReactionTypes {
         case delayedUpdate
@@ -43,22 +48,22 @@ final class ChatViewController: UIViewController {
 
     private var currentInterfaceActions: SetActor<Set<InterfaceActions>, ReactionTypes> = SetActor()
     private var currentControllerActions: SetActor<Set<ControllerActions>, ReactionTypes> = SetActor()
-    private let editNotifier: EditNotifier
+//    private let editNotifier: EditNotifier
     private var collectionView: UICollectionView!
     private var chatLayout = ChatLayout()
     private let inputBarView = InputBarAccessoryView()
-    private let chatController: ChatController
-    private let dataSource: ChatCollectionDataSource
+//    private let chatController: ChatController
+//    private let dataSource: ChatCollectionDataSource
     private let fpsCounter = FPSCounter()
     private let fpsView = EdgeAligningView<UILabel>(frame: CGRect(origin: .zero, size: .init(width: 30, height: 30)))
 
-    init(chatController: ChatController,
-         dataSource: ChatCollectionDataSource,
-         editNotifier: EditNotifier) {
-        self.chatController = chatController
-        self.dataSource = dataSource
-        self.editNotifier = editNotifier
+    let dataSource = RxChatDataSource()
+
+    init() {
+        
         super.init(nibName: nil, bundle: nil)
+
+        chatLayout.delegate = dataSource
     }
 
     @available(*, unavailable, message: "Use init(messageController:) instead")
@@ -108,8 +113,6 @@ final class ChatViewController: UIViewController {
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: chatLayout)
         view.addSubview(collectionView)
         collectionView.alwaysBounceVertical = true
-        collectionView.dataSource = dataSource
-        chatLayout.delegate = dataSource
         collectionView.delegate = self
         collectionView.keyboardDismissMode = .interactive
 
@@ -129,15 +132,35 @@ final class ChatViewController: UIViewController {
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
-        dataSource.prepare(with: collectionView)
-
-        currentControllerActions.options.insert(.loadingInitialMessages)
-        chatController.loadInitialMessages { sections in
-            self.currentControllerActions.options.remove(.loadingInitialMessages)
-            self.processUpdates(with: sections, animated: true)
+        collectionView.register(TextMessageCollectionCell.self, forCellWithReuseIdentifier: TextMessageCollectionCell.reuseIdentifier)
+        collectionView.register(ImageCollectionCell.self, forCellWithReuseIdentifier: ImageCollectionCell.reuseIdentifier)
+        collectionView.register(TitleCollectionCell.self, forCellWithReuseIdentifier: TitleCollectionCell.reuseIdentifier)
+        collectionView.register(TypingIndicatorCollectionCell.self, forCellWithReuseIdentifier: TypingIndicatorCollectionCell.reuseIdentifier)
+        collectionView.register(TextTitleView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TextTitleView.reuseIdentifier)
+        collectionView.register(TextTitleView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: TextTitleView.reuseIdentifier)
+        if #available(iOS 13.0, *) {
+            collectionView.register(URLCollectionCell.self, forCellWithReuseIdentifier: URLCollectionCell.reuseIdentifier)
         }
 
+        currentControllerActions.options.insert(.loadingInitialMessages)
+        //        chatController.loadInitialMessages { sections in
+//            self.currentControllerActions.options.remove(.loadingInitialMessages)
+//            self.processUpdates(with: sections, animated: true)
+//        }
+
         KeyboardListener.shared.add(delegate: self)
+
+        // ChatViewModelOutputs
+        disposeBag.insert(
+            viewModel.outputs.sections
+                .drive(collectionView.rx.items(dataSource: dataSource))
+        )
+
+        // ChatViewModelInputs
+        disposeBag.insert(
+            rx.viewDidLoad
+                .bind(to: viewModel.inputs.viewDidLoad)
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -182,7 +205,7 @@ final class ChatViewController: UIViewController {
 
     @objc private func setEditNotEdit() {
         isEditing = !isEditing
-        editNotifier.setIsEditing(isEditing, duration: .animated(duration: 0.25))
+//        editNotifier.setIsEditing(isEditing, duration: .animated(duration: 0.25))
         navigationItem.rightBarButtonItem?.title = isEditing ? "Done" : "Edit"
         chatLayout.invalidateLayout()
     }
@@ -223,17 +246,17 @@ extension ChatViewController: UIScrollViewDelegate {
     private func loadPreviousMessages() {
         // Blocking the potential multiple call of that function as during the content invalidation the contentOffset of the UICollectionView can change
         // in any way so it may trigger another call of that function and lead to unexpected behaviour/animation
-        currentControllerActions.options.insert(.loadingPreviousMessages)
-        chatController.loadPreviousMessages { [weak self] sections in
-            guard let self = self else {
-                return
-            }
+//        currentControllerActions.options.insert(.loadingPreviousMessages)
+//        chatController.loadPreviousMessages { [weak self] sections in
+//            guard let self = self else {
+//                return
+//            }
             // Reloading the content without animation just because it looks better is the scrolling is in process.
-            let animated = !self.isUserInitiatedScrolling
-            self.processUpdates(with: sections, animated: animated) {
-                self.currentControllerActions.options.remove(.loadingPreviousMessages)
-            }
-        }
+//            let animated = !self.isUserInitiatedScrolling
+//            self.processUpdates(with: sections, animated: animated) {
+//                self.currentControllerActions.options.remove(.loadingPreviousMessages)
+//            }
+//        }
     }
 
     fileprivate var isUserInitiatedScrolling: Bool {
@@ -261,60 +284,60 @@ extension ChatViewController: UICollectionViewDelegate {}
 extension ChatViewController: ChatControllerDelegate {
 
     func update(with sections: [Section]) {
-        processUpdates(with: sections, animated: true)
+//        processUpdates(with: sections, animated: true)
     }
 
-    private func processUpdates(with sections: [Section], animated: Bool = true, completion: (() -> Void)? = nil) {
-        guard isViewLoaded else {
-            dataSource.sections = sections
-            return
-        }
-
-        guard currentInterfaceActions.options.isEmpty else {
-            let reaction = SetActor<Set<InterfaceActions>, ReactionTypes>.Reaction(type: .delayedUpdate,
-                                                                                   action: .onEmpty,
-                                                                                   executionType: .once,
-                                                                                   actionBlock: { [weak self] in
-                                                                                       guard let self = self else {
-                                                                                           return
-                                                                                       }
-                                                                                       self.processUpdates(with: sections, animated: animated, completion: completion)
-                                                                                   })
-            currentInterfaceActions.add(reaction: reaction)
-            return
-        }
-
-        func process() {
-            let changeSet = StagedChangeset(source: dataSource.sections, target: sections).flattenIfPossible()
-            collectionView.reload(using: changeSet,
-                                  interrupt: { changeSet in
-                                      guard changeSet.sectionInserted.isEmpty else {
-                                          return true
-                                      }
-                                      return false
-                                  },
-                                  onInterruptedReload: {
-                                      let positionSnapshot = ChatLayoutPositionSnapshot(indexPath: IndexPath(item: 0, section: 0), kind: .footer, edge: .bottom)
-                                      self.collectionView.reloadData()
-                                      // We want so that user on reload appeared at the very bottom of the layout
-                                      self.chatLayout.restoreContentOffset(with: positionSnapshot)
-                                  },
-                                  completion: { _ in
-                                      completion?()
-                                  },
-                                  setData: { data in
-                                      self.dataSource.sections = data
-                                  })
-        }
-
-        if animated {
-            process()
-        } else {
-            UIView.performWithoutAnimation {
-                process()
-            }
-        }
-    }
+//    private func processUpdates(with sections: [Section], animated: Bool = true, completion: (() -> Void)? = nil) {
+//        guard isViewLoaded else {
+//            dataSource.sections = sections
+//            return
+//        }
+//
+//        guard currentInterfaceActions.options.isEmpty else {
+//            let reaction = SetActor<Set<InterfaceActions>, ReactionTypes>.Reaction(type: .delayedUpdate,
+//                                                                                   action: .onEmpty,
+//                                                                                   executionType: .once,
+//                                                                                   actionBlock: { [weak self] in
+//                                                                                       guard let self = self else {
+//                                                                                           return
+//                                                                                       }
+//                                                                                       self.processUpdates(with: sections, animated: animated, completion: completion)
+//                                                                                   })
+//            currentInterfaceActions.add(reaction: reaction)
+//            return
+//        }
+//
+//        func process() {
+//            let changeSet = StagedChangeset(source: dataSource.sections, target: sections).flattenIfPossible()
+//            collectionView.reload(using: changeSet,
+//                                  interrupt: { changeSet in
+//                                      guard changeSet.sectionInserted.isEmpty else {
+//                                          return true
+//                                      }
+//                                      return false
+//                                  },
+//                                  onInterruptedReload: {
+//                                      let positionSnapshot = ChatLayoutPositionSnapshot(indexPath: IndexPath(item: 0, section: 0), kind: .footer, edge: .bottom)
+//                                      self.collectionView.reloadData()
+//                                      // We want so that user on reload appeared at the very bottom of the layout
+//                                      self.chatLayout.restoreContentOffset(with: positionSnapshot)
+//                                  },
+//                                  completion: { _ in
+//                                      completion?()
+//                                  },
+//                                  setData: { data in
+//                                      self.dataSource.sections = data
+//                                  })
+//        }
+//
+//        if animated {
+//            process()
+//        } else {
+//            UIView.performWithoutAnimation {
+//                process()
+//            }
+//        }
+//    }
 
 }
 
@@ -335,10 +358,11 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                 self.currentInterfaceActions.options.remove(.sendingMessage)
                 return
             }
-            self.chatController.sendMessage(.text(messageText)) { sections in
-                self.currentInterfaceActions.options.remove(.sendingMessage)
-                self.processUpdates(with: sections, animated: true)
-            }
+//            self.chatController.sendMessage(.text(messageText)) { sections in
+            self.currentInterfaceActions.options.remove(.sendingMessage)
+            self.viewModel.inputs.newMessage.onNext(messageText)
+//                self.processUpdates(with: sections, animated: true)
+//            }
         }
         inputBar.inputTextView.text = String()
         inputBar.invalidatePlugins()

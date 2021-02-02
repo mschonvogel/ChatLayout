@@ -77,6 +77,8 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* StateControllerProcessUpdatesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* StateControllerProcessUpdatesTests.swift */; };
 		65D4D44932474631D9677C50 /* Pods_ChatLayout_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FB56A5FF321AA24C456635 /* Pods_ChatLayout_Tests.framework */; };
+		E9EF5E3625C8E86600E1FD18 /* ChatDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EF5E3525C8E86600E1FD18 /* ChatDataSource.swift */; };
+		E9FD4DC625C8DFFC005DBD25 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FD4DC525C8DFFC005DBD25 /* ChatViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +174,8 @@
 		B520747F8C032C454221D1EC /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		BDD575DC427C1961B83F685C /* Pods-ChatLayout_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatLayout_Example.release.xcconfig"; path = "Target Support Files/Pods-ChatLayout_Example/Pods-ChatLayout_Example.release.xcconfig"; sourceTree = "<group>"; };
 		CFE0D61EDC4670E905EC3EF0 /* Pods-ChatLayout_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatLayout_Example.debug.xcconfig"; path = "Target Support Files/Pods-ChatLayout_Example/Pods-ChatLayout_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		E9EF5E3525C8E86600E1FD18 /* ChatDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDataSource.swift; sourceTree = "<group>"; };
+		E9FD4DC525C8DFFC005DBD25 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -336,7 +340,9 @@
 		4504F3C924FA66F500385590 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E9FD4DC525C8DFFC005DBD25 /* ChatViewModel.swift */,
 				4504F3CA24FA66F500385590 /* ChatViewController.swift */,
+				E9EF5E3525C8E86600E1FD18 /* ChatDataSource.swift */,
 				4504F3CB24FA66F500385590 /* Status View */,
 				4504F3CD24FA66F500385590 /* Data Source */,
 				4504F3D024FA66F500385590 /* Text Message View */,
@@ -650,15 +656,29 @@
 				"${PODS_ROOT}/Target Support Files/Pods-ChatLayout_Example/Pods-ChatLayout_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/ChatLayout/ChatLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/DifferenceKit/DifferenceKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/FPSCounter/FPSCounter.framework",
 				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
+				"${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwiftExt/RxSwiftExt.framework",
+				"${BUILT_PRODUCTS_DIR}/RxViewController/RxViewController.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChatLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DifferenceKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FPSCounter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxRelay.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwiftExt.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxViewController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -700,6 +720,7 @@
 				4504F40F24FA66F600385590 /* BubbleController.swift in Sources */,
 				4504F41B24FA66F600385590 /* ImageController.swift in Sources */,
 				4504F3FF24FA66F600385590 /* ImageForUrlCache.swift in Sources */,
+				E9FD4DC625C8DFFC005DBD25 /* ChatViewModel.swift in Sources */,
 				4504F40424FA66F600385590 /* PersistentDataCache.swift in Sources */,
 				4504F42524FA66F600385590 /* EditingAccessoryController.swift in Sources */,
 				4504F40824FA66F600385590 /* Caches.swift in Sources */,
@@ -730,6 +751,7 @@
 				4504F3F524FA66F600385590 /* DefaultChatController.swift in Sources */,
 				4504F41324FA66F600385590 /* DefaultBubbleController.swift in Sources */,
 				4504F41524FA66F600385590 /* AvatarPlaceholderView.swift in Sources */,
+				E9EF5E3625C8E86600E1FD18 /* ChatDataSource.swift in Sources */,
 				4504F41624FA66F600385590 /* AvatarView.swift in Sources */,
 				4504F40B24FA66F600385590 /* ChatCollectionDataSource.swift in Sources */,
 				4504F3FA24FA66F600385590 /* Message.swift in Sources */,

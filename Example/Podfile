@@ -6,6 +6,11 @@ target 'ChatLayout_Example' do
   pod 'InputBarAccessoryView'
   pod 'DifferenceKit'
   pod 'FPSCounter', '~> 4.0'
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'RxDataSources'
+  pod 'RxSwiftExt'
+  pod 'RxViewController'
 
   target 'ChatLayout_Tests' do
     inherit! :search_paths

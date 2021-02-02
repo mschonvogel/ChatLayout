@@ -13,22 +13,56 @@ PODS:
   - DifferenceKit/Core (1.1.5)
   - DifferenceKit/UIKitExtension (1.1.5):
     - DifferenceKit/Core
+  - Differentiator (4.0.1)
   - FPSCounter (4.1.0)
   - InputBarAccessoryView (5.2.2):
     - InputBarAccessoryView/Core (= 5.2.2)
   - InputBarAccessoryView/Core (5.2.2)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxDataSources (4.0.1):
+    - Differentiator (~> 4.0)
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
+  - RxSwift (5.1.1)
+  - RxSwiftExt (5.2.0):
+    - RxSwiftExt/Core (= 5.2.0)
+    - RxSwiftExt/RxCocoa (= 5.2.0)
+  - RxSwiftExt/Core (5.2.0):
+    - RxSwift (~> 5.0)
+  - RxSwiftExt/RxCocoa (5.2.0):
+    - RxCocoa (~> 5.0)
+    - RxSwiftExt/Core
+  - RxViewController (1.0.0):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
 
 DEPENDENCIES:
   - ChatLayout (from `../`)
   - DifferenceKit
   - FPSCounter (~> 4.0)
   - InputBarAccessoryView
+  - RxCocoa
+  - RxDataSources
+  - RxSwift
+  - RxSwiftExt
+  - RxViewController
 
 SPEC REPOS:
   trunk:
     - DifferenceKit
+    - Differentiator
     - FPSCounter
     - InputBarAccessoryView
+    - RxCocoa
+    - RxDataSources
+    - RxRelay
+    - RxSwift
+    - RxSwiftExt
+    - RxViewController
 
 EXTERNAL SOURCES:
   ChatLayout:
@@ -37,9 +71,16 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   ChatLayout: be088b8fccc3cd95047a58cf96a76127f9362454
   DifferenceKit: 516f12e336ed65a3a0665847b5c3cb5cad4bd4ea
+  Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   FPSCounter: 884afec377de66637808c4f52ecc3b85a404732b
   InputBarAccessoryView: 8ec44fced9840957831f7ab842e9c4fe6ff9a252
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  RxSwiftExt: 4ca80336f43c28f11a2825cdd2fc61dd6c044697
+  RxViewController: 7330a46e5c31cd680db169da4c9fc8676e975a81
 
-PODFILE CHECKSUM: 8c714139f0a07a1f2169fe35aa2829ae446d122a
+PODFILE CHECKSUM: 5c92b2b9092f1edf7b9b936fd9740aa8e2cd20b5
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1
